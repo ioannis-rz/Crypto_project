@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matematik - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+    <header class="top-bar">
+        <div class="container">
+            <a href="{{ url_for('menu') }}" class="brand"><img src="{{ url_for('static', filename='images/icons/cerebro.png') }}" class="icondash">Matematik</a>
+            <nav class="nav-buttons">
+                <a href="{{ url_for('index') }}" class="btn-nav"><img src="{{ url_for('static', filename='images/icons/informe.png') }}" class="icondash1">Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="btn-logout"><img src="{{ url_for('static', filename='images/icons/cerrar-sesion.png') }}" class="icondash1">Cerrar sesión</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="dashboard-title"><img src="{{ url_for('static', filename='images/icons/medidor.png') }}" class="icondash1">Dashboard de aprendizaje</h1>
+
+            <section class="stats-section">
+                <div class="stat-card stat-card-blue">
+                    <img src="{{ url_for('static', filename='images/icons/cronografo.png') }}" class="icondash">
+                    <div class="stat-content">
+                        <h3>Tiempo de estudio</h3>
+                        <p class="stat-value" id="study-time">{{ user_data.study_time }}</p>
+                        <span class="stat-unit">minutos</span>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-card-green">
+                    <img src="{{ url_for('static', filename='images/icons/cheque.png') }}" class="icondash">
+                    <div class="stat-content">
+                        <h3>Ejercicios completados</h3>
+                        <p class="stat-value" id="exercises">{{ user_data.exercises_completed }}</p>
+                        <span class="stat-unit">ejercicios</span>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-card-orange">
+                    <img src="{{ url_for('static', filename='images/icons/medalla.png') }}" class="icondash">
+                    <div class="stat-content">
+                        <h3>Racha actual</h3>
+                        <p class="stat-value" id="streak">{{ user_data.current_streak }}</p>
+                        <span class="stat-unit">días</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="progress-section">
+                <div class="progress-card">
+                    <h3><img src="{{ url_for('static', filename='images/icons/pizarron.png') }}" class="icondash2"> Progreso - Primaria</h3>
+                    <div class="progress-list">
+                        <div class="progress-item">
+                            <span class="progress-label">Aritmética</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ user_data.progress.primaria.aritmetica }}%"></div>
+                            </div>
+                            <span class="progress-percent">{{ user_data.progress.primaria.aritmetica }}%</span>
+                        </div>
+                        <div class="progress-item">
+                            <span class="progress-label">Geometría</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ user_data.progress.primaria.geometria }}%"></div>
+                            </div>
+                            <span class="progress-percent">{{ user_data.progress.primaria.geometria }}%</span>
+                        </div>
+                        <div class="progress-item">
+                            <span class="progress-label">Álgebra</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ user_data.progress.primaria.algebra }}%"></div>
+                            </div>
+                            <span class="progress-percent">{{ user_data.progress.primaria.algebra }}%</span>
+                        </div>
+                        <div class="progress-item">
+                            <span class="progress-label">Estadística</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ user_data.progress.primaria.estadistica }}%"></div>
+                            </div>
+                            <span class="progress-percent">{{ user_data.progress.primaria.estadistica }}%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-card">
+                    <h3><img src="{{ url_for('static', filename='images/icons/trigonometria.png') }}" class="icondash2"> Progreso - Secundaria</h3>
+                    <div class="progress-list">
+                        <div class="progress-item">
+                            <span class="progress-label">Aritmética</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ user_data.progress.secundaria.aritmetica }}%"></div>
+                            </div>
+                            <span class="progress-percent">{{ user_data.progress.secundaria.aritmetica }}%</span>
+                        </div>
+                        <div class="progress-item">
+                            <span class="progress-label">Geometría</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ user_data.progress.secundaria.geometria }}%"></div>
+                            </div>
+                            <span class="progress-percent">{{ user_data.progress.secundaria.geometria }}%</span>
+                        </div>
+                        <div class="progress-item">
+                            <span class="progress-label">Álgebra</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ user_data.progress.secundaria.algebra }}%"></div>
+                            </div>
+                            <span class="progress-percent">{{ user_data.progress.secundaria.algebra }}%</span>
+                        </div>
+                        <div class="progress-item">
+                            <span class="progress-label">Trigonometría</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ user_data.progress.secundaria.trigonometria }}%"></div>
+                            </div>
+                            <span class="progress-percent">{{ user_data.progress.secundaria.trigonometria }}%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="topics-section">
+                <h2 class="section-title">Explorar temas</h2>
+                
+                <h3 class="level-title">Primaria</h3>
+                <div class="topics-grid">
+                    <a href="{{ url_for('tema', nivel='primaria', tema='aritmetica') }}" class="topic-card topic-blue">
+                        <img src="{{ url_for('static', filename='images/icons/mas.png') }}" class="icondash3">
+                        <h4>Aritmética</h4>
+                        <p>Operaciones básicas y números</p>
+                    </a>
+                    <a href="{{ url_for('tema', nivel='primaria', tema='geometria') }}" class="topic-card topic-purple">
+                         <img src="{{ url_for('static', filename='images/icons/geometria.png') }}" class="icondash3">
+                        <h4>Geometría</h4>
+                        <p>Formas y figuras</p>
+                    </a>
+                    <a href="{{ url_for('tema', nivel='primaria', tema='algebra') }}" class="topic-card topic-pink">
+                        <img src="{{ url_for('static', filename='images/icons/algebra.png') }}" class="icondash3">
+                        <h4>Álgebra básica</h4>
+                        <p>Introducción a variables</p>
+                    </a>
+                    <a href="{{ url_for('tema', nivel='primaria', tema='estadistica') }}" class="topic-card topic-blue">
+                        <img src="{{ url_for('static', filename='images/icons/estadistica.png') }}" class="icondash3">
+                        <h4>Estadística</h4>
+                        <p>Analisis de datos</p>
+                    </a>
+                </div>
+
+                <h3 class="level-title">Secundaria</h3>
+                <div class="topics-grid">
+                    <a href="{{ url_for('tema', nivel='secundaria', tema='aritmetica') }}" class="topic-card topic-cyan">
+                        <img src="{{ url_for('static', filename='images/icons/aritmetica.png') }}" class="icondash3">
+                        <h4>Aritmética avanzada</h4>
+                        <p>Fracciones y decimales</p>
+                    </a>
+                    <a href="{{ url_for('tema', nivel='secundaria', tema='geometria') }}" class="topic-card topic-green">
+                        <img src="{{ url_for('static', filename='images/icons/geometria2.png') }}" class="icondash3">
+                        <h4>Geometría</h4>
+                        <p>Teoremas y cálculos</p>
+                    </a>
+                    <a href="{{ url_for('tema', nivel='secundaria', tema='algebra') }}" class="topic-card topic-orange">
+                        <img src="{{ url_for('static', filename='images/icons/algebra2.png') }}" class="icondash3">
+                        <h4>Álgebra</h4>
+                        <p>Ecuaciones y funciones</p>
+                    </a>
+                    <a href="{{ url_for('tema', nivel='secundaria', tema='trigonometria') }}" class="topic-card topic-red">
+                        <img src="{{ url_for('static', filename='images/icons/trigonometria2.png') }}" class="icondash3">
+                        <h4>Trigonometría</h4>
+                        <p>Ángulos y funciones</p>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

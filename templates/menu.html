@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matematik - Menú Principal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        .menu-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 120px);
+            padding: 2rem;
+        }
+
+        .menu-title {
+            font-size: 3rem;
+            color: #2c3e50;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .menu-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .menu-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-card:nth-child(1) {
+            border-color: #E3F2FD;
+        }
+
+        .menu-card:nth-child(1):hover {
+            border-color: #2196F3;
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+        }
+
+        .menu-card:nth-child(2) {
+            border-color: #E8F5E9;
+        }
+
+        .menu-card:nth-child(2):hover {
+            border-color: #4CAF50;
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+        }
+
+        .menu-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .menu-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .menu-card p {
+            font-size: 1rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header class="top-bar">
+        <div class="container">
+            <a href="{{ url_for('menu') }}" class="brand"><img src="{{ url_for('static', filename='images/icons/cerebro.png') }}" class="icondash">Matematik</a>
+            <nav class="nav-buttons">
+                <a href="{{ url_for('index') }}" class="btn-nav"><img src="{{ url_for('static', filename='images/icons/informe.png') }}" class="icondash1">Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="btn-logout"><img src="{{ url_for('static', filename='images/icons/cerrar-sesion.png') }}" class="icondash1">Cerrar sesión</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="menu-content">
+        <h1 class="menu-title">Menú Principal</h1>
+        <div class="menu-options">
+            <a href="{{ url_for('index') }}" class="menu-card">
+                <img src="{{ url_for('static', filename='images/icons/analisis.png') }}" class="icondash">
+                <h3>Dashboard</h3>
+                <p>Ver tu progreso y estadísticas</p>
+            </a>
+            <a href="{{ url_for('index') }}" class="menu-card">
+                <img src="{{ url_for('static', filename='images/icons/actividad.png') }}" class="icondash">
+                <h3>Actividades</h3>
+                <p>Explorar temas y ejercicios</p>
+            </a>
+        </div>
+    </main>
+</body>
+</html>

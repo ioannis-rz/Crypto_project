@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matematik - {{ tema|title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        .activity-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .activity-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .activity-header h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            text-transform: capitalize;
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(135deg, #4FC3F7 0%, #29B6F6 100%);
+            color: white;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: capitalize;
+            margin-bottom: 1rem;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .timer-value {
+            color: #FF9800;
+        }
+
+        .question-value {
+            color: #4FC3F7;
+        }
+
+        .exercise-container {
+            background: white;
+            border-radius: 15px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .exercise-question {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .exercise-options {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-btn {
+            padding: 1.2rem 1.5rem;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .option-btn:hover:not(.correct):not(.incorrect) {
+            border-color: #4FC3F7;
+            background: #f0f9ff;
+            transform: translateX(5px);
+        }
+
+        .option-btn.selected {
+            border-color: #4FC3F7;
+            background: #f0f9ff;
+        }
+
+        .option-btn.correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+            cursor: default;
+        }
+
+        .option-btn.incorrect {
+            border-color: #F44336;
+            background: #ffebee;
+            cursor: default;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #4FC3F7 0%, #29B6F6 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(79, 195, 247, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        }
+
+        .next-btn:hover {
+            box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+        }
+
+        .feedback {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .feedback.correct {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 2px solid #4CAF50;
+        }
+
+        .feedback.incorrect {
+            background: #ffebee;
+            color: #c62828;
+            border: 2px solid #F44336;
+        }
+
+        .results-container {
+            background: white;
+            border-radius: 15px;
+            padding: 3rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .results-title {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+        }
+
+        .results-score {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #4FC3F7;
+            margin: 2rem 0;
+        }
+
+        .results-message {
+            font-size: 1.3rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .results-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .result-stat {
+            padding: 1.5rem;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+
+        .result-stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .result-stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #4FC3F7;
+            border: 2px solid #4FC3F7;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background: #4FC3F7;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="top-bar">
+        <div class="container">
+            <a href="{{ url_for('menu') }}" class="brand"><img src="{{ url_for('static', filename='images/icons/cerebro.png') }}" class="icondash">Matematik</a>
+            <nav class="nav-buttons">
+                <a href="{{ url_for('index') }}" class="btn-nav"><img src="{{ url_for('static', filename='images/icons/informe.png') }}" class="icondash1">Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="btn-logout"><img src="{{ url_for('static', filename='images/icons/cerrar-sesion.png') }}" class="icondash1">Cerrar sesión</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="activity-content">
+        <div class="activity-header">
+            <h1>{{ tema }}</h1>
+            <span class="level-badge">{{ nivel }}</span>
+        </div>
+
+        <div class="progress-info">
+            <div class="info-item">
+                <div class="info-label">Pregunta</div>
+                <div class="info-value question-value">
+                    <span id="current-question">1</span>/<span id="total-questions">10</span>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Tiempo</div>
+                <div class="info-value timer-value" id="timer">00:00</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Correctas</div>
+                <div class="info-value" style="color: #4CAF50;" id="correct-count">0</div>
+            </div>
+        </div>
+
+        <div id="quiz-container" class="exercise-container">
+            <div class="exercise-question" id="question-text"></div>
+            <div class="exercise-options" id="options-container"></div>
+            <div id="feedback" class="feedback hidden"></div>
+            <button class="submit-btn" id="submit-btn" onclick="checkAnswer()">Verificar respuesta</button>
+        </div>
+
+        <div id="results-container" class="results-container hidden">
+            <div class="results-title">¡Cuestionario completado!</div>
+            <div class="results-score" id="final-score"></div>
+            <div class="results-message" id="results-message"></div>
+            
+            <div class="results-stats">
+                <div class="result-stat">
+                    <div class="result-stat-value" style="color: #4CAF50;" id="final-correct">0</div>
+                    <div class="result-stat-label">Correctas</div>
+                </div>
+                <div class="result-stat">
+                    <div class="result-stat-value" style="color: #F44336;" id="final-incorrect">0</div>
+                    <div class="result-stat-label">Incorrectas</div>
+                </div>
+                <div class="result-stat">
+                    <div class="result-stat-value" style="color: #FF9800;" id="final-time">00:00</div>
+                    <div class="result-stat-label">Tiempo total</div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="{{ url_for('index') }}" class="submit-btn" style="max-width: 300px;">Ver Dashboard</a>
+                <button class="btn-secondary" onclick="location.reload()">Reintentar</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const nivel = '{{ nivel }}';
+        const tema = '{{ tema }}';
+        
+        const questionBank = {
+            primaria: {
+                aritmetica: [
+                    { q: '¿Cuánto es 15 + 28?', options: ['33', '43', '53', '63'], answer: 1 },
+                    { q: '¿Cuánto es 56 - 23?', options: ['33', '43', '23', '13'], answer: 0 },
+                    { q: '¿Cuánto es 7 × 8?', options: ['54', '56', '64', '48'], answer: 1 },
+                    { q: '¿Cuánto es 48 ÷ 6?', options: ['6', '7', '8', '9'], answer: 2 },
+                    { q: '¿Cuánto es 25 + 37?', options: ['52', '62', '72', '82'], answer: 1 },
+                    { q: '¿Cuánto es 100 - 47?', options: ['43', '53', '63', '73'], answer: 1 },
+                    { q: '¿Cuánto es 9 × 6?', options: ['45', '54', '63', '72'], answer: 1 },
+                    { q: '¿Cuánto es 72 ÷ 9?', options: ['6', '7', '8', '9'], answer: 2 },
+                    { q: '¿Cuánto es 34 + 29?', options: ['53', '63', '73', '83'], answer: 1 },
+                    { q: '¿Cuánto es 12 × 5?', options: ['50', '55', '60', '65'], answer: 2 }
+                ],
+                geometria: [
+                    { q: '¿Cuántos lados tiene un triángulo?', options: ['2', '3', '4', '5'], answer: 1 },
+                    { q: '¿Cuántos lados tiene un cuadrado?', options: ['3', '4', '5', '6'], answer: 1 },
+                    { q: '¿Cuántos lados tiene un pentágono?', options: ['4', '5', '6', '7'], answer: 1 },
+                    { q: '¿Cuántos ángulos tiene un rectángulo?', options: ['2', '3', '4', '5'], answer: 2 },
+                    { q: '¿Cuántos lados tiene un hexágono?', options: ['5', '6', '7', '8'], answer: 1 },
+                    { q: '¿Cómo se llama un polígono de 8 lados?', options: ['Hexágono', 'Heptágono', 'Octágono', 'Nonágono'], answer: 2 },
+                    { q: '¿Cuántos vértices tiene un cubo?', options: ['6', '8', '10', '12'], answer: 1 },
+                    { q: '¿Cuántas caras tiene un cubo?', options: ['4', '6', '8', '10'], answer: 1 },
+                    { q: '¿Qué figura tiene todos sus lados iguales?', options: ['Rectángulo', 'Rombo', 'Trapecio', 'Todas'], answer: 1 },
+                    { q: '¿Cuántos grados suman los ángulos de un triángulo?', options: ['90°', '180°', '270°', '360°'], answer: 1 }
+                ],
+                algebra: [
+                    { q: 'Si x + 5 = 10, ¿cuánto vale x?', options: ['3', '4', '5', '6'], answer: 2 },
+                    { q: 'Si x - 3 = 7, ¿cuánto vale x?', options: ['8', '9', '10', '11'], answer: 2 },
+                    { q: 'Si 2x = 10, ¿cuánto vale x?', options: ['3', '4', '5', '6'], answer: 2 },
+                    { q: 'Si x + 8 = 15, ¿cuánto vale x?', options: ['5', '6', '7', '8'], answer: 2 },
+                    { q: 'Si x - 4 = 6, ¿cuánto vale x?', options: ['8', '9', '10', '11'], answer: 2 },
+                    { q: 'Si 3x = 15, ¿cuánto vale x?', options: ['3', '4', '5', '6'], answer: 2 },
+                    { q: 'Si x + 12 = 20, ¿cuánto vale x?', options: ['6', '7', '8', '9'], answer: 2 },
+                    { q: 'Si 4x = 20, ¿cuánto vale x?', options: ['4', '5', '6', '7'], answer: 1 },
+                    { q: 'Si x - 7 = 3, ¿cuánto vale x?', options: ['8', '9', '10', '11'], answer: 2 },
+                    { q: 'Si x + 6 = 14, ¿cuánto vale x?', options: ['6', '7', '8', '9'], answer: 2 }
+                ],
+                estadistica: [
+                    { q: '¿Qué es la media aritmética?', options: ['El número que más se repite en un conjunto', 'La diferencia entre el valor máximo y mínimo', 'La suma de todos los valores dividida entre la cantidad de datos', 'El valor que divide el conjunto en dos partes iguales'], answer: 2 },
+                    { q: 'La moda de un conjunto de datos es…', options: ['El promedio de los valores', 'El número que aparece con mayor frecuencia', 'El valor central cuando los datos están ordenados', 'El número máximo del conjunto'], answer: 1 },
+                    { q: '¿Qué representa la mediana?', options: ['El valor central del conjunto de datos ordenados', 'El valor más alto del conjunto', 'La mitad del rango', 'La variabilidad de los datos'], answer: 0 },
+                    { q: 'El rango se define como…', options: ['La suma total de los datos', 'El cociente entre el dato mayor y el dato menor', 'La diferencia entre el dato mayor y el dato menor', 'El número que aparece más veces'], answer: 2 },
+                    { q: 'Si los datos son: 2, 3, 3, 6, 8 ¿Cuál es la moda?', options: ['2', '3', '6', '8'], answer: 1 },
+                    { q: 'Si un conjunto de datos tiene 8 números, la mediana es…', options: ['Siempre uno de los valores', 'El número más repetido', 'El promedio entre el 4° y 5° dato ordenados', 'El valor más grande'], answer: 2 },
+                    { q: '¿Cuál de los siguientes NO es una medida de tendencia central?', options: ['Media', 'Varianza', 'Moda', 'Mediana'], answer: 1 },
+                    { q: 'La varianza sirve para medir…', options: ['El valor máximo de un conjunto', 'La concentración de los datos alrededor del promedio', 'La diferencia entre el valor mayor y el menor', 'La frecuencia del valor más común'], answer: 1 },
+                    { q: 'En un histograma, cada barra representa…', options: ['La media de cada intervalo', 'La frecuencia de un intervalo de datos', 'El valor máximo de los datos', 'La moda del conjunto'], answer: 1 },
+                    { q: 'Si el rango de un conjunto de datos es 12 y el valor mínimo es 5, el valor máximo es…', options: ['7', '17', '12', '5'], answer: 1 }
+                ]
+            },
+            secundaria: {
+                aritmetica: [
+                    { q: '¿Cuánto es 3/4 + 1/4?', options: ['1/2', '3/4', '1', '4/8'], answer: 2 },
+                    { q: '¿Cuánto es 0.5 + 0.25?', options: ['0.50', '0.75', '1.00', '1.25'], answer: 1 },
+                    { q: '¿Cuánto es 2/3 × 3/2?', options: ['1/2', '1', '3/2', '2'], answer: 1 },
+                    { q: '¿Cuánto es 5² (5 al cuadrado)?', options: ['10', '15', '20', '25'], answer: 3 },
+                    { q: '¿Cuál es la raíz cuadrada de 64?', options: ['6', '7', '8', '9'], answer: 2 },
+                    { q: '¿Cuánto es 15% de 200?', options: ['20', '25', '30', '35'], answer: 2 },
+                    { q: '¿Cuánto es 1/2 - 1/4?', options: ['1/8', '1/4', '1/3', '1/2'], answer: 1 },
+                    { q: '¿Cuánto es 3³ (3 al cubo)?', options: ['9', '18', '27', '36'], answer: 2 },
+                    { q: '¿Cuánto es 20% de 150?', options: ['20', '25', '30', '35'], answer: 2 },
+                    { q: '¿Cuál es la raíz cuadrada de 100?', options: ['8', '9', '10', '11'], answer: 2 }
+                ],
+                geometria: [
+                    { q: 'El área de un cuadrado de lado 5 cm es:', options: ['10 cm²', '20 cm²', '25 cm²', '30 cm²'], answer: 2 },
+                    { q: 'El perímetro de un rectángulo de 5×3 cm es:', options: ['8 cm', '15 cm', '16 cm', '18 cm'], answer: 2 },
+                    { q: 'El área de un triángulo de base 6 y altura 4 es:', options: ['10', '12', '20', '24'], answer: 1 },
+                    { q: 'El volumen de un cubo de lado 3 cm es:', options: ['9 cm³', '18 cm³', '27 cm³', '36 cm³'], answer: 2 },
+                    { q: 'La circunferencia de radio 7 cm tiene un diámetro de:', options: ['7 cm', '14 cm', '21 cm', '28 cm'], answer: 1 },
+                    { q: 'El área de un círculo de radio 2 es aproximadamente:', options: ['6.28', '12.56', '18.84', '25.12'], answer: 1 },
+                    { q: '¿Cuántos grados tiene un ángulo recto?', options: ['45°', '60°', '90°', '180°'], answer: 2 },
+                    { q: 'La suma de los ángulos internos de un cuadrilátero es:', options: ['180°', '270°', '360°', '450°'], answer: 2 },
+                    { q: 'El perímetro de un cuadrado de lado 8 cm es:', options: ['16 cm', '24 cm', '32 cm', '64 cm'], answer: 2 },
+                    { q: 'El área de un rectángulo de 10×4 cm es:', options: ['14 cm²', '28 cm²', '40 cm²', '50 cm²'], answer: 2 }
+                ],
+                algebra: [
+                    { q: 'Si 2x + 3 = 11, ¿cuánto vale x?', options: ['2', '3', '4', '5'], answer: 2 },
+                    { q: 'Si 3x - 5 = 10, ¿cuánto vale x?', options: ['3', '4', '5', '6'], answer: 2 },
+                    { q: 'Si x² = 16, ¿cuánto vale x?', options: ['2', '4', '8', '16'], answer: 1 },
+                    { q: '¿Cuál es el resultado de (x + 3)(x + 2)?', options: ['x² + 5x + 6', 'x² + 6x + 5', 'x² + 5', 'x² + 6'], answer: 0 },
+                    { q: 'Si 4x = 20, entonces x vale:', options: ['4', '5', '6', '7'], answer: 1 },
+                    { q: 'Si x/3 = 5, ¿cuánto vale x?', options: ['10', '12', '15', '18'], answer: 2 },
+                    { q: 'Si 5x + 2 = 17, ¿cuánto vale x?', options: ['2', '3', '4', '5'], answer: 1 },
+                    { q: '¿Cuál es la factorización de x² - 9?', options: ['(x-3)(x+3)', '(x-9)(x+1)', '(x-3)²', 'No se puede'], answer: 0 },
+                    { q: 'Si 2x - 8 = 4, ¿cuánto vale x?', options: ['4', '5', '6', '7'], answer: 2 },
+                    { q: 'Si x² = 25, ¿cuánto vale x? (valor positivo)', options: ['3', '4', '5', '6'], answer: 2 }
+                ],
+                trigonometria: [
+                    { q: 'El seno de 90° es:', options: ['0', '0.5', '1', '∞'], answer: 2 },
+                    { q: 'El coseno de 0° es:', options: ['0', '0.5', '1', '∞'], answer: 2 },
+                    { q: 'La tangente de 45° es:', options: ['0', '0.5', '1', '2'], answer: 2 },
+                    { q: 'El seno de 30° es:', options: ['0', '0.5', '1', '1.5'], answer: 1 },
+                    { q: 'El coseno de 90° es:', options: ['0', '0.5', '1', '-1'], answer: 0 },
+                    { q: 'En un triángulo rectángulo, el cateto opuesto dividido por la hipotenusa es:', options: ['Seno', 'Coseno', 'Tangente', 'Cotangente'], answer: 0 },
+                    { q: 'En un triángulo rectángulo, el cateto adyacente dividido por la hipotenusa es:', options: ['Seno', 'Coseno', 'Tangente', 'Cotangente'], answer: 1 },
+                    { q: '¿Cuántos grados tiene π radianes?', options: ['90°', '180°', '270°', '360°'], answer: 1 },
+                    { q: 'El valor de sen²θ + cos²θ es:', options: ['0', '1', '2', 'θ'], answer: 1 },
+                    { q: 'La tangente de un ángulo es igual a:', options: ['sen/cos', 'cos/sen', 'sen×cos', 'sen+cos'], answer: 0 }
+                ]
+            }
+        };
+
+        let currentQuestionIndex = 0;
+        let correctAnswers = 0;
+        let selectedOption = null;
+        let startTime = Date.now();
+        let questions = [];
+
+        function initQuiz() {
+            questions = questionBank[nivel][tema];
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                showResults();
+                return;
+            }
+
+            const question = questions[currentQuestionIndex];
+            document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+            document.getElementById('question-text').textContent = question.q;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = String.fromCharCode(65 + index) + ') ' + option;
+                btn.onclick = () => selectOption(index);
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('feedback').classList.add('hidden');
+            document.getElementById('submit-btn').textContent = 'Verificar respuesta';
+            document.getElementById('submit-btn').disabled = false;
+            selectedOption = null;
+        }
+
+        function selectOption(index) {
+            if (document.getElementById('submit-btn').textContent !== 'Verificar respuesta') return;
+            
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('.option-btn')[index].classList.add('selected');
+            selectedOption = index;
+        }
+
+        function checkAnswer() {
+            const submitBtn = document.getElementById('submit-btn');
+            
+            if (submitBtn.textContent === 'Verificar respuesta') {
+                if (selectedOption === null) {
+                    alert('Por favor selecciona una opción');
+                    return;
+                }
+
+                const question = questions[currentQuestionIndex];
+                const feedback = document.getElementById('feedback');
+                const options = document.querySelectorAll('.option-btn');
+                
+                if (selectedOption === question.answer) {
+                    correctAnswers++;
+                    options[selectedOption].classList.add('correct');
+                    feedback.className = 'feedback correct';
+                    feedback.textContent = '¡Correcto! ✓';
+                    document.getElementById('correct-count').textContent = correctAnswers;
+                } else {
+                    options[selectedOption].classList.add('incorrect');
+                    options[question.answer].classList.add('correct');
+                    feedback.className = 'feedback incorrect';
+                    feedback.textContent = 'Incorrecto. La respuesta correcta es: ' + String.fromCharCode(65 + question.answer);
+                }
+                
+                feedback.classList.remove('hidden');
+                options.forEach(opt => opt.onclick = null);
+                
+                submitBtn.textContent = currentQuestionIndex < questions.length - 1 ? 'Siguiente pregunta' : 'Ver resultados';
+                submitBtn.className = 'submit-btn next-btn';
+            } else {
+                currentQuestionIndex++;
+                loadQuestion();
+            }
+        }
+
+        async function showResults() {
+            const timeSpent = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(timeSpent / 60);
+            const seconds = timeSpent % 60;
+            const timeString = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+            
+            const percentage = (correctAnswers / questions.length) * 100;
+            const progressIncrease = Math.round((correctAnswers / questions.length) * 100);
+
+            
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('results-container').classList.remove('hidden');
+            
+            document.getElementById('final-score').textContent = correctAnswers + '/' + questions.length;
+            document.getElementById('final-correct').textContent = correctAnswers;
+            document.getElementById('final-incorrect').textContent = questions.length - correctAnswers;
+            document.getElementById('final-time').textContent = timeString;
+            
+            let message = '';
+            if (percentage === 100) message = '¡Perfecto! Dominas completamente este tema.';
+            else if (percentage >= 80) message = '¡Excelente trabajo! Muy buen desempeño.';
+            else if (percentage >= 60) message = '¡Bien hecho! Sigue practicando.';
+            else if (percentage >= 40) message = 'Buen intento. Necesitas más práctica.';
+            else message = 'Sigue estudiando. ¡Tú puedes!';
+            
+            document.getElementById('results-message').textContent = message;
+
+            try {
+                const response = await fetch('/api/update_stats', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        study_time: minutes > 0 ? minutes : 1,
+                        exercise_completed: true,
+                        progress: {
+                            nivel: nivel,
+                            tema: tema,
+                            increase: progressIncrease
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    console.log('Estadísticas actualizadas correctamente');
+                }
+            } catch (error) {
+                console.error('Error al actualizar estadísticas:', error);
+            }
+        }
+
+        setInterval(() => {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('timer').textContent = 
+                String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+        }, 1000);
+
+        initQuiz();
+    </script>
+</body>
+</html>
