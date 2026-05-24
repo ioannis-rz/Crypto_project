@@ -1,7 +1,7 @@
 from flask import request, session, redirect, url_for, render_template, flash
 from functools import wraps
 from models import User, db
-
+from zxcvbn import zxcvbn
 
 def login_required(f):
     @wraps(f)
@@ -41,9 +41,15 @@ def register():
         if len(username) < 3:
             return render_template('register.html', error='El nombre de usuario debe tener al menos 3 caracteres')
         
-        if len(password) < 6:
-            return render_template('register.html', error='La contraseña debe tener al menos 6 caracteres')
-        
+        if len(password) < 8:
+            return render_template('register.html', error='La contraseña debe tener al menos 8 caracteres')
+
+        results = zxcvbn(password, user_inputs=[username])
+        print(results.get('feedback'))  # Para depuración, puedes eliminar esto en producción
+        if results['score'] < 1:
+            return render_template('register.html', error = results.get('feedback').get('warning') if results.get('feedback') and results.get('feedback').get('warning') 
+                                   else 'Añade algunas palabras más o símbolos')
+
         if password != confirm_password:
             return render_template('register.html', error='Las contraseñas no coinciden')
         
