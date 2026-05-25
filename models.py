@@ -4,7 +4,6 @@ from datetime import datetime
 
 db = SQLAlchemy()
 
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -19,7 +18,6 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-
 class Progress(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     level = db.Column(db.String(20), nullable=False)  
@@ -31,7 +29,6 @@ class Progress(db.Model):
     __table_args__ = (
         db.UniqueConstraint('user_id', 'level', 'subject', name='_user_level_subject_uc'),
     )
-
 
 class UserStats(db.Model):
     id = db.Column(db.Integer, primary_key=True)
