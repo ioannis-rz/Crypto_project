@@ -3,10 +3,14 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 import datetime
 
+# private_key.pem & certificate_request.pem can be generated with 
+# openssl genrsa -out private_key.pem 
+# openssl req -new -key private_key.pem -out certificate_request.pem
+# on the terminal
+
 def generate_self_signed_certificate(private_key_path, certificate_request_path, output_cert_path):
     with open(private_key_path, 'rb') as f:
         key = serialization.load_pem_private_key(f.read(), password=None, backend=default_backend())
-
     with open(certificate_request_path, 'rb') as f:
         csr = x509.load_pem_x509_csr(f.read(), default_backend())
 
