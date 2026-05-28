@@ -3,6 +3,8 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from datetime import datetime, timedelta
 import os
+import logging
+from logging.handlers import RotatingFileHandler
 
 PEPPER = os.environ.get("PASSWORD_PEPPER")
 if not PEPPER:
@@ -10,6 +12,25 @@ if not PEPPER:
 
 app = Flask(__name__)
 app.secret_key = 'tu_clave_secreta_aqui_cambiarla_en_produccion'
+
+# ========== CONFIGURACIÓN DE LOGS DE AUDITORÍA ==========
+# Crear directorio para logs si no existe
+log_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'logs')
+os.makedirs(log_dir, exist_ok=True)
+log_file = os.path.join(log_dir, 'audit.log')
+
+# Configurar handler con rotación (1 MB por archivo, 5 backups)
+handler = RotatingFileHandler(log_file, maxBytes=1_000_000, backupCount=5)
+handler.setFormatter(logging.Formatter(
+    '[%(asctime)s] %(levelname)s - %(message)s'
+))
+app.logger.addHandler(handler)
+app.logger.setLevel(logging.INFO)
+
+# Evitar que los logs se dupliquen en consola en modo producción
+if not app.debug:
+    app.logger.propagate = False
+# ========================================================
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
 instance_dir = os.path.join(base_dir, 'instance')
@@ -114,6 +135,13 @@ def tema(nivel, tema):
 @app.route('/logout')
 def logout():
     """Cerrar sesión"""
+    # [LOG] Registrar cierre de sesión si hay usuario autenticado
+    user_id = session.get('user_id')
+    if user_id:
+        user = User.query.get(user_id)
+        username = user.username if user else str(user_id)
+        app.logger.info(f'Cierre de sesión - Usuario: {username}, IP: {request.remote_addr}')
+    
     session.clear()
     return redirect(url_for('login'))
 
@@ -124,17 +152,24 @@ def update_stats():
     """API para actualizar estadísticas del usuario"""
     data = request.json
     user_id = session.get('user_id')
+    user = User.query.get(user_id)
+    username = user.username if user else str(user_id)
+    ip = request.remote_addr
     
     stats = UserStats.query.filter_by(user_id=user_id).first()
     if not stats:
         stats = UserStats(user_id=user_id)
         db.session.add(stats)
     
+    # [LOG] Registrar la actividad
+    log_details = []
     if 'study_time' in data:
         stats.study_time += data['study_time']
+        log_details.append(f'tiempo_estudio:+{data["study_time"]}')
     
     if 'exercise_completed' in data:
         stats.exercises_completed += 1
+        log_details.append('ejercicio_completado')
     
     today = datetime.now().date()
     if stats.last_activity_date:
@@ -168,10 +203,17 @@ def update_stats():
                     percentage=min(increase, 100)
                 )
                 db.session.add(progress)
+                log_details.append(f'nuevo_progreso:{nivel}/{tema}:+{increase}')
             else:
+                old_pct = progress.percentage
                 progress.percentage = min(progress.percentage + increase, 100)
+                log_details.append(f'actualizar_progreso:{nivel}/{tema}:{old_pct}->{progress.percentage}')
     
     db.session.commit()
+    
+    # Registrar el log resumido
+    if log_details:
+        app.logger.info(f'Actividad - Usuario: {username}, IP: {ip}, Detalles: {", ".join(log_details)}')
     
     user_stats = get_user_stats(user_id)
     progress_data = get_user_progress(user_id)
@@ -188,6 +230,9 @@ def update_stats():
 def reset_progress():
     """API para reiniciar todo el progreso del usuario"""
     user_id = session.get('user_id')
+    user = User.query.get(user_id)
+    username = user.username if user else str(user_id)
+    ip = request.remote_addr
     
     try:
         stats = UserStats.query.filter_by(user_id=user_id).first()
@@ -201,10 +246,15 @@ def reset_progress():
         
         db.session.commit()
         
+        # [LOG] Registrar reinicio de progreso
+        app.logger.warning(f'Progreso reiniciado - Usuario: {username}, IP: {ip}')
+        
         return jsonify({'success': True, 'message': 'Progreso reiniciado correctamente'})
     
     except Exception as e:
         db.session.rollback()
+        # [LOG] Error al reiniciar
+        app.logger.error(f'Error al reiniciar progreso - Usuario: {username}, IP: {ip}, Error: {str(e)}')
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
