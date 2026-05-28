@@ -17,7 +17,7 @@ pip install Flask Flask-Limiter Flask-SSLify cryptography SQLAlchemy
 
 ## Configuración
 
-La aplicación requiere la variable de entorno `PASSWORD_PEPPER`, que puede ser egenrada con pepper_generation.py:
+La aplicación requiere la variable de entorno `PASSWORD_PEPPER`, que puede ser generada con pepper_generation.py:
 
 ```bash
 export PASSWORD_PEPPER="tu_valor_secreto"
@@ -27,6 +27,10 @@ En PowerShell:
 
 ```powershell
 $env:PASSWORD_PEPPER="tu_valor_secreto"
+```
+Por comodidad, está hardocded en models.py como
+```Python
+PEPPER = "salpimentar"
 ```
 
 ## Generar certificados TLS
