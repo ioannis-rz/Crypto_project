@@ -1,6 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+import os
+
+# export PASSWORD_PEPPER="f6759f0dea72ae082a89cff7a8ffaddf" # en consola antes de ejecutar la aplicación
+PEPPER = os.environ["PASSWORD_PEPPER"]
+# print(PEPPER)
 
 db = SQLAlchemy()
 
@@ -13,10 +17,10 @@ class User(db.Model):
     stats = db.relationship('UserStats', backref='user', uselist=False, cascade='all, delete-orphan')
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password, salt_length=16)
+        self.password_hash = generate_password_hash(password + PEPPER, salt_length=16)
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return check_password_hash(self.password_hash, password + PEPPER, salt_length=16)
 
 class Progress(db.Model):
     id = db.Column(db.Integer, primary_key=True)
