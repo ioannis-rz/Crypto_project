@@ -1,7 +1,7 @@
 from flask import Flask, render_template, session, redirect, url_for, jsonify, request
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
 
 PEPPER = os.environ.get("PASSWORD_PEPPER")
@@ -19,7 +19,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 limiter = Limiter(app=app, key_func=get_remote_address)
 
-from models import db, User, Progress, UserStats
+from models import db, Progress, UserStats
 from auth import login_required, login, register
 
 db.init_app(app)

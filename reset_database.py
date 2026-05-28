@@ -1,5 +1,4 @@
 import os
-import sys
 
 def reset_database():
     """Borra la base de datos completamente y la recrea desde cero"""
