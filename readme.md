@@ -28,7 +28,7 @@ En PowerShell:
 ```powershell
 $env:PASSWORD_PEPPER="tu_valor_secreto"
 ```
-Por comodidad, está hardocded en models.py como
+Por comodidad, está hardcoded en models.py como
 ```Python
 PEPPER = "salpimentar"
 ```
