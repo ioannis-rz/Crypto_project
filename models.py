@@ -2,9 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
-# export PASSWORD_PEPPER="f6759f0dea72ae082a89cff7a8ffaddf" # en consola antes de ejecutar la aplicación
 PEPPER = os.environ["PASSWORD_PEPPER"]
-# print(PEPPER)
 
 db = SQLAlchemy()
 
