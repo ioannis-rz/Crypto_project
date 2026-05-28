@@ -1,5 +1,4 @@
-```markdown
-# Crypto Project
+# Matematik
 
 Proyecto de ejemplo para una aplicación Flask con estadísticas de usuario y progreso académico.
 
