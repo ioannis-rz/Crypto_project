@@ -4,6 +4,10 @@ from flask_limiter.util import get_remote_address
 from datetime import datetime, timedelta
 import os
 
+PEPPER = os.environ.get("PASSWORD_PEPPER")
+if not PEPPER:
+    raise RuntimeError("PASSWORD_PEPPER environment variable not set")
+
 app = Flask(__name__)
 app.secret_key = 'tu_clave_secreta_aqui_cambiarla_en_produccion'
 
