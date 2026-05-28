@@ -1,3 +1,15 @@
 tests
 instance
 __pycache__
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+package.json
+package-lock.json
+playwright.config.ts
+e2e/example.spec.ts
