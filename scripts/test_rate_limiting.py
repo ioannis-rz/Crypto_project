@@ -1,9 +1,9 @@
 import requests
-import certifi
+import os
 from concurrent.futures import ThreadPoolExecutor
 import time
 
-url = "http://127.0.0.1:5000/login"
+url = "https://127.0.0.1:5000/login"
 payload = {
     "username": "aaa",
     "password": "2"
@@ -22,6 +22,5 @@ def send_request(i):
     except requests.exceptions.RequestException as e:
         print(f"{i} | Error: {e}")
 
-# Use 4 threads
-with ThreadPoolExecutor(max_workers=16) as executor:
-    executor.map(send_request, range(5000))
+with ThreadPoolExecutor(max_workers=os.cpu_count()) as executor:
+    executor.map(send_request, range(100))
