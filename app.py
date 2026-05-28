@@ -9,9 +9,6 @@ import os
 # if not PEPPER:
 #     raise RuntimeError("PASSWORD_PEPPER environment variable not set")
 
-# por facilidad, ardcodear el pepper
-PEPPER = "salpimentar"
-
 app = Flask(__name__)
 sslify = SSLify(app)
 app.secret_key = 'tu_clave_secreta_aqui_cambiarla_en_produccion'
