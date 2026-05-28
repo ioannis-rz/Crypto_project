@@ -17,7 +17,7 @@ pip install Flask Flask-Limiter Flask-SSLify cryptography SQLAlchemy
 
 ## Configuración
 
-La aplicación requiere la variable de entorno `PASSWORD_PEPPER`:
+La aplicación requiere la variable de entorno `PASSWORD_PEPPER`, que puede ser egenrada con pepper_generation.py:
 
 ```bash
 export PASSWORD_PEPPER="tu_valor_secreto"
