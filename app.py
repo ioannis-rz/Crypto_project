@@ -5,9 +5,12 @@ from flask_sslify import SSLify
 from datetime import datetime
 import os
 
-PEPPER = os.environ.get("PASSWORD_PEPPER")
-if not PEPPER:
-    raise RuntimeError("PASSWORD_PEPPER environment variable not set")
+# PEPPER = os.environ.get("PASSWORD_PEPPER")
+# if not PEPPER:
+#     raise RuntimeError("PASSWORD_PEPPER environment variable not set")
+
+# por facilidad, ardcodear el pepper
+PEPPER = "salpimentar"
 
 app = Flask(__name__)
 sslify = SSLify(app)
