@@ -1,4 +1,6 @@
 import os
+from app import app, db
+from models import User
 
 def reset_database():
     """Borra la base de datos completamente y la recrea desde cero"""
@@ -25,9 +27,7 @@ def reset_database():
             return
     else:
         print("⚠️  No se encontró base de datos existente")
-    
-    from app import app, db
-    from models import User
+
     
     with app.app_context():
         print("🔨 Creando nueva base de datos...")

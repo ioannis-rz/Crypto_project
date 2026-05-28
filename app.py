@@ -1,7 +1,17 @@
 from flask import Flask, render_template, session, redirect, url_for, jsonify, request
+
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+
+from flask_sslify import SSLify
+# from ssl import SSLContext
+# from cryptography.hazmat.backends import default_backend
+# from cryptography.hazmat.primitives import serialization
+# from OpenSSL import crypto
+import ssl
+
 from datetime import datetime
+# from waitress import serve
 import os
 
 PEPPER = os.environ.get("PASSWORD_PEPPER")
@@ -9,7 +19,23 @@ if not PEPPER:
     raise RuntimeError("PASSWORD_PEPPER environment variable not set")
 
 app = Flask(__name__)
+sslify = SSLify(app)
 app.secret_key = 'tu_clave_secreta_aqui_cambiarla_en_produccion'
+
+
+# private_key = serialization.load_pem_private_key(
+#     open('private_key.pem', 'rb').read(),
+#     password=None,
+#     backend=default_backend()
+# )
+
+# self_signed_certificate = crypto.x509.load_pem_x509_certificate(
+#     open('self_signed_certificate.pem', 'rb').read(),
+#     default_backend()
+# )
+
+# context =
+# context.load_cert_chain(self_signed_certificate, private_key)
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
 instance_dir = os.path.join(base_dir, 'instance')
@@ -24,8 +50,8 @@ from auth import login_required, login, register
 
 db.init_app(app)
 
-login = limiter.limit("10 per minute", methods=["POST"])(login)
-register = limiter.limit("10 per minute", methods=["POST"])(register)
+login = limiter.limit("15 per minute", methods=["POST"])(login)
+register = limiter.limit("15 per minute", methods=["POST"])(register)
 
 # Rutas de autenticación
 app.add_url_rule('/login', view_func=login, methods=['GET', 'POST'])
@@ -211,4 +237,4 @@ def reset_progress():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(debug=True, ssl_context=('self_signed_certificate.pem', 'private_key.pem'))
