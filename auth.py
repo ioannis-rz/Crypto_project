@@ -1,4 +1,4 @@
-from flask import request, session, redirect, url_for, render_template, flash
+from flask import request, session, redirect, url_for, render_template
 from functools import wraps
 from models import User, db
 from zxcvbn import zxcvbn

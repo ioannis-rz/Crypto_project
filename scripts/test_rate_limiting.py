@@ -3,7 +3,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 import time
 
-url = "http://127.0.0.1:5000/login"
+url = "https://127.0.0.1:5000/login"
 payload = {
     "username": "aaa",
     "password": "2"
