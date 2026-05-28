@@ -12,4 +12,4 @@ node_modules/
 package.json
 package-lock.json
 playwright.config.ts
-e2e/example.spec.ts
+e2e
