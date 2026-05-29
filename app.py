@@ -19,7 +19,11 @@ os.makedirs(instance_dir, exist_ok=True)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(instance_dir, 'app.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-limiter = Limiter(app=app, key_func=get_remote_address)
+limiter = Limiter(
+    app=app, 
+    key_func=get_remote_address,
+    storage_uri="memory://",
+)
 
 from models import db, Progress, UserStats
 from auth import login_required, login, register
@@ -214,3 +218,4 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True, ssl_context=('self_signed_certificate.pem', 'private_key.pem'))
+    # app.run(ssl_context=('self_signed_certificate.pem', 'private_key.pem'), host=('0.0.0.0'))
