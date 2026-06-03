@@ -49,8 +49,8 @@ def register():
             return render_template('register.html', error='La contraseña debe tener al menos 8 caracteres')
 
         results = zxcvbn(password, user_inputs=[username])
-        print(results.get('feedback'))
-        if results['score'] < 1:
+        print(results.get('feedback'))  # Para depuración, puedes eliminar esto en producción
+        if results['score'] < 2:
             return render_template('register.html', error = results.get('feedback').get('warning') if results.get('feedback') and results.get('feedback').get('warning') 
                                    else 'Añade algunas palabras más o símbolos')
 

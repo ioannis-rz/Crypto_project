@@ -1,16 +1,18 @@
 from flask import Flask, render_template, session, redirect, url_for, jsonify, request
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from datetime import datetime, timedelta
+from flask_sslify import SSLify
+from datetime import datetime
 import os
 import logging
 from logging.handlers import RotatingFileHandler
 
-PEPPER = os.environ.get("PASSWORD_PEPPER")
-if not PEPPER:
-    raise RuntimeError("PASSWORD_PEPPER environment variable not set")
+# PEPPER = os.environ.get("PASSWORD_PEPPER")
+# if not PEPPER:
+#     raise RuntimeError("PASSWORD_PEPPER environment variable not set")
 
 app = Flask(__name__)
+sslify = SSLify(app)
 app.secret_key = 'tu_clave_secreta_aqui_cambiarla_en_produccion'
 
 # ========== CONFIGURACIÓN DE LOGS DE AUDITORÍA ==========
@@ -38,15 +40,19 @@ os.makedirs(instance_dir, exist_ok=True)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(instance_dir, 'app.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-limiter = Limiter(app=app, key_func=get_remote_address)
+limiter = Limiter(
+    app=app, 
+    key_func=get_remote_address,
+    storage_uri="memory://",
+)
 
-from models import db, User, Progress, UserStats
+from models import db, Progress, UserStats
 from auth import login_required, login, register
 
 db.init_app(app)
 
-login = limiter.limit("10 per minute", methods=["POST"])(login)
-register = limiter.limit("10 per minute", methods=["POST"])(register)
+login = limiter.limit("15 per minute", methods=["POST"])(login)
+register = limiter.limit("15 per minute", methods=["POST"])(register)
 
 # Rutas de autenticación
 app.add_url_rule('/login', view_func=login, methods=['GET', 'POST'])
@@ -261,4 +267,5 @@ def reset_progress():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(debug=True, ssl_context=('self_signed_certificate.pem', 'private_key.pem'))
+    # app.run(ssl_context=('self_signed_certificate.pem', 'private_key.pem'), host=('0.0.0.0'))

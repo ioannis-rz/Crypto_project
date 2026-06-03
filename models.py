@@ -2,7 +2,11 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
-PEPPER = os.environ["PASSWORD_PEPPER"]
+# PEPPER = os.environ.get("PASSWORD_PEPPER")
+# if not PEPPER:
+#     raise RuntimeError("PASSWORD_PEPPER environment variable not set")
+
+PEPPER = "salpimentar"
 
 db = SQLAlchemy()
 
