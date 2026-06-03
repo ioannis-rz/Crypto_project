@@ -23,4 +23,4 @@ def send_request(i):
         print(f"{i} | Error: {e}")
 
 with ThreadPoolExecutor(max_workers=os.cpu_count()) as executor:
-    executor.map(send_request, range(100))
+    executor.map(send_request, range(11))
